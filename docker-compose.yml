@@ -1,0 +1,48 @@
+version: '3'
+services:
+  lucasveiculos_postgres:
+    image: postgres
+    container_name: lucasveiculos_postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.ignore/postgres/postgres:/var/lib/postgresql/data
+    networks:
+      - lucasveiculos
+    environment:
+      - POSTGRES_NAME=lucasveiculos_db
+      - POSTGRES_DB=lucasveiculos_db
+      - POSTGRES_USER=lucasveiculos
+      - POSTGRES_PASSWORD=lucasveiculos
+
+  lucasveiculos_pgadmin:
+    image: dpage/pgadmin4
+    container_name: lucasveiculos_pgadmin
+    ports:
+      - "5433:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=lucasnunes146@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=39114141
+    volumes:
+      - ./.ignore/var/lib/pgadmin:/var/lib/pgadmin
+    networks:
+      - lucasveiculos
+    user: root
+    logging:
+      driver: none
+
+  lucasveiculos:
+    container_name: lucasveiculos
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    networks:
+      - lucasveiculos
+    depends_on:
+      - lucasveiculos_postgres
+
+networks:
+  lucasveiculos:
+    driver: bridge
